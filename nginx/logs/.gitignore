@@ -1,0 +1,6 @@
+*
+!.gitignore
+mysql/data
+pgsql/data
+redis/data
+zsh/plugins
