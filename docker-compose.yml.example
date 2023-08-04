@@ -10,8 +10,10 @@ services:
       MYSQL_USER: '${MYSQL_USER:-admin}'
       MYSQL_PASSWORD: '${MYSQL_PASSWORD:-admin12345678@#}'
       MYSQL_ROOT_HOST: '${MYSQL_ROOT_HOST:-%}'
-    volumes_from:
-      - data
+    volumes:
+      - ./mysql/data:/var/lib/mysql
+      - ./mysql/my.cnf:/etc/mysql/my.cnf
+      - ./mysql/init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
     ports:
       - "3306:3306"
     deploy:
@@ -41,8 +43,9 @@ services:
       PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-my-strong-password}
       POSTGRES_DB: 'postgres'
       POSTGRES_HOST: 'localhost'
-    volumes_from:
-      - data
+    volumes:
+      - ./pgsql/data:/var/lib/postgresql/data
+      - ./pgsql/my-postgres.conf:/etc/postgresql/postgresql.conf
     ports:
       - "5432:5432"
     deploy:
@@ -65,8 +68,9 @@ services:
     ports:
       - "6379:6379"
       - "8001:8001"
-    volumes_from:
-      - data
+    volumes:
+      - ./redis/data:/data
+      - ./redis/redis.conf:/redis-stack.conf
     deploy:
       resources:
         limits:
@@ -134,19 +138,6 @@ services:
       - ./zsh/.p10k.zsh:/root/.p10k.zsh
       - ./zsh/.zsh_history:/root/.zsh_history
       - ./zsh/plugins:/opt/zsh/plugins
-      
-      # Redis
-      - ./redis/data:/data
-      - ./redis/redis.conf:/redis-stack.conf
-
-      #PGSQL
-      - ./pgsql/data:/var/lib/postgresql/data
-      - ./pgsql/my-postgres.conf:/etc/postgresql/postgresql.conf
-
-      #MySQL
-      - ./mysql/data:/var/lib/mysql
-      - ./mysql/my.cnf:/etc/mysql/my.cnf
-      - ./mysql/init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
     networks:
       - dev-network
     healthcheck:
